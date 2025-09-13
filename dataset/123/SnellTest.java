@@ -1,0 +1,74 @@
+/*
+ * Apache License
+ * Version 2.0, January 2004
+ * http://www.apache.org/licenses/
+ *
+ *    Copyright 2013 - 2025 Aurelian Tutuianu
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ *
+ */
+
+package rapaio.core.distributions;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import rapaio.data.Frame;
+import rapaio.io.Csv;
+
+public class PoissonTest {
+
+    private static final double TOL = 1e-13;
+
+    private Frame df;
+    private Poisson pois1;
+    private Poisson pois5;
+    private Poisson pois10;
+    private Poisson pois100;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        df = Csv.instance()
+                .naValues.set("NaN", "Inf")
+                .read(rapaio.core.distributions.HypergeometricTest.class, "pois.csv");
+
+        pois1 = Poisson.of(1);
+        pois5 = Poisson.of(5);
+        pois10 = Poisson.of(10);
+        pois100 = Poisson.of(100);
+    }
+
+    @Test
+    public void testMiscelaneous() {
+        assertEquals("Poisson(lambda=1)", pois1.name());
+        assertTrue(pois1.discrete());
+        assertEquals(0, pois1.pdf(-1), TOL);
+        assertEquals(0, pois1.cdf(-1), TOL);
+        assertEquals(Double.POSITIVE_INFINITY, pois1.quantile(1), TOL);
+
+        assertEquals(0, pois1.minValue(), TOL);
+        assertEquals(Double.POSITIVE_INFINITY, pois1.maxValue(), TOL);
+        assertEquals(1, pois1.mean(), TOL);
+        assertEquals(1, pois1.mode(), TOL);
+        assertEquals(1, pois1.var(), TOL);
+        assertEquals(1, pois1.skewness(), TOL);
+        assertEquals(1, pois1.kurtosis(), TOL);
+        assertEquals(0, pois1.entropy(), TOL);
+    }
+
+}
